@@ -3,11 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
+
+
+    protected $table = 'users';
+
 
     protected $fillable = [
         'full_name',
@@ -20,17 +26,25 @@ class User extends Authenticatable
     ];
 
 
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
 
+
     protected $casts = [
+
         'email_verified_at'=>'datetime',
+
         'last_login_at'=>'datetime'
+
     ];
 
+
+
+    // User Role Relationship
 
     public function role()
     {
@@ -38,32 +52,48 @@ class User extends Authenticatable
     }
 
 
+
+    // Station Relationship
+
     public function station()
     {
-        return $this->belongsTo(Station::class);
+        return $this->belongsTo(Station::class,'station_id');
     }
 
+
+
+    // Monthly Reports
 
     public function monthlyReports()
     {
-        return $this->hasMany(MonthlyReport::class);
+        return $this->hasMany(MonthlyReport::class,'user_id');
     }
 
+
+
+    // Password History
 
     public function passwordChanges()
     {
-        return $this->hasMany(PasswordChangeHistory::class);
+        return $this->hasMany(PasswordChangeHistory::class,'user_id');
     }
 
+
+
+    // Notifications
 
     public function notifications()
     {
-        return $this->hasMany(SystemNotification::class);
+        return $this->hasMany(SystemNotification::class,'user_id');
     }
 
+
+
+    // Audit Logs
 
     public function auditLogs()
     {
-        return $this->hasMany(AuditLog::class);
+        return $this->hasMany(AuditLog::class,'user_id');
     }
+
 }
