@@ -1,0 +1,214 @@
+# Laravel Database & Model Testing Guide
+
+## Database Connection Verification
+
+### Open Laravel Tinker
+```bash
+php artisan tinker
+```
+
+---
+
+## Testing Stations Model
+
+### Count Total Stations
+```php
+App\Models\Station::count();
+```
+**Expected Result:** `106`
+
+### Retrieve First Station
+```php
+$station = App\Models\Station::first();
+```
+**Expected Output:**
+```
+id: 1
+station_code: ABN
+station_name: Abangahawatta
+status: active
+```
+
+---
+
+## Testing User Model
+
+### Count Total Users
+```php
+App\Models\User::count();
+```
+**Expected Result:** `2`
+
+### Retrieve First User
+```php
+$user = App\Models\User::first();
+```
+**Expected Output:**
+```
+full_name: Super Administrator
+nic_number: 999999999999
+role_id: 2
+```
+
+---
+
+## Testing Relationships
+
+### User → Role Relationship
+**Relationship Method:**
+```php
+public function role()
+{
+    return $this->belongsTo(UserRole::class,'role_id');
+}
+```
+**Test Command:**
+```php
+$user->role;
+```
+**Expected Output:**
+```
+id: 2
+role_name: Super Administrator
+role_slug: super_admin
+```
+
+### User → Station Relationship
+**Retrieve Specific User:**
+```php
+$user = App\Models\User::where('nic_number','199912345678')->first();
+```
+**Test Command:**
+```php
+$user->station;
+```
+**Expected Output:**
+```
+station_code: BRL
+station_name: Beruwala
+```
+
+### Station → Users Relationship
+**Retrieve Specific Station:**
+```php
+$station = App\Models\Station::where('station_code','BRL')->first();
+```
+**Test Command:**
+```php
+$station->user;
+```
+**Expected Output:**
+```
+Sample Station User
+```
+
+---
+
+## Testing Designations Model
+
+### Count Total Designations
+```php
+App\Models\Designation::count();
+```
+**Expected Result:** `35`
+
+---
+
+## Testing Monthly Reports
+
+### Count Reports
+```php
+App\Models\MonthlyReport::count();
+```
+**Expected Result:** `0`
+
+### Create Test Report
+```php
+$report = App\Models\MonthlyReport::create([
+    'station_id'=>2,
+    'user_id'=>2,
+    'year'=>2026,
+    'month'=>'JUL',
+    'month_full'=>'July',
+    'submission_status'=>'submitted'
+]);
+```
+
+### Verify Created Report
+```php
+$report;
+```
+
+### Test Report → Station Relationship
+```php
+$report->station;
+```
+
+### Test Report → User Relationship
+```php
+$report->user;
+```
+**Expected Output:** `Sample Station User`
+
+---
+
+## Important Table Names Reference
+
+| Model | Table Name | Custom Table Setting |
+|-------|------------|---------------------|
+| UserRole | user_roles | Default |
+| PasswordChangeHistory | password_change_history | `protected $table='password_change_history';` |
+| MissingSubmissionsTracking | missing_submissions_tracking | `protected $table='missing_submissions_tracking';` |
+| Station | stations | Default |
+| User | users | Default |
+| Designation | designations | Default |
+| MonthlyReport | monthly_reports | Default |
+
+---
+
+## Troubleshooting Table Name Issues
+
+If Laravel cannot automatically guess table names, add explicit table declarations in your models:
+
+```php
+// For PasswordChangeHistory Model
+protected $table='password_change_history';
+
+// For MissingSubmissionsTracking Model
+protected $table='missing_submissions_tracking';
+```
+
+---
+
+## Testing Summary Checklist
+
+- [ ] Database connection working
+- [ ] Stations table has 106 records
+- [ ] First station retrieved correctly
+- [ ] Users table has 2 records
+- [ ] First user retrieved correctly
+- [ ] User → Role relationship works
+- [ ] User → Station relationship works
+- [ ] Station → User relationship works
+- [ ] Designations table has 35 records
+- [ ] MonthlyReport model works
+- [ ] Report creation successful
+- [ ] Report relationships work
+
+---
+
+## Next Development Steps
+
+```
+1. Models ✅
+2. Authentication
+3. Login Controller
+4. Middleware
+   - Admin Role
+   - Station User Role
+5. Dashboards
+```
+
+---
+
+**Note:** All tests must pass before proceeding to authentication and controller development. These tests confirm that Laravel ↔ MySQL ↔ Models connections are correct.
