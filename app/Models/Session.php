@@ -4,25 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AuditLog extends Model
+class Session extends Model
 {
 
+    protected $table='sessions';
+
+    public $incrementing=false;
+
+    protected $keyType='string';
+
+
     protected $fillable=[
+        'id',
         'user_id',
-        'action',
-        'module',
-        'record_id',
-        'old_data',
-        'new_data',
         'ip_address',
         'user_agent',
-        'description'
-    ];
-
-
-    protected $casts=[
-        'old_data'=>'array',
-        'new_data'=>'array'
+        'payload',
+        'last_activity'
     ];
 
 
