@@ -36,7 +36,7 @@ class MonthlyReport extends Model
     }
 
 
-    public function details()
+    public function reportDetails()
     {
         return $this->hasMany(ReportDetail::class);
     }

@@ -53,6 +53,29 @@ class User extends Authenticatable
 
 
 
+    // Role checks used by routes and navigation
+
+    public function hasRole(string $roleSlug): bool
+    {
+        return $this->role?->role_slug === $roleSlug;
+    }
+
+
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super_admin');
+    }
+
+
+
+    public function isStationUser(): bool
+    {
+        return $this->hasRole('station_user');
+    }
+
+
+
     // Station Relationship
 
     public function station()
