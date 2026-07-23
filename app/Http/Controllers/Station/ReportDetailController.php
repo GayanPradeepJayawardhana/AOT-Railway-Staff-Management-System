@@ -44,10 +44,16 @@ class ReportDetailController extends Controller
             ],
         ]);
 
-        $monthlyReport->reportDetails()->create($data);
+        // Create the report detail
+        $reportDetail = $monthlyReport->reportDetails()->create($data);
+
+        // Update the report status if it was draft
+        if ($monthlyReport->submission_status === 'draft') {
+            $monthlyReport->update(['submission_status' => 'submitted']);
+        }
 
         return redirect()->route('station.reports.show', $monthlyReport)
-            ->with('status', 'Designation record added successfully.');
+            ->with('status', 'Designation record for "' . $reportDetail->designation->designation_name . '" added successfully.');
     }
 
     public function show(MonthlyReport $monthlyReport, ReportDetail $reportDetail): View
@@ -74,7 +80,7 @@ class ReportDetailController extends Controller
         $this->authorizeBelongsToReport($monthlyReport, $reportDetail);
 
         $data = $request->validate($this->rules());
-        unset($data['designation_id']);
+        unset($data['designation_id']); // Designation cannot be changed on edit
 
         $reportDetail->update($data);
 

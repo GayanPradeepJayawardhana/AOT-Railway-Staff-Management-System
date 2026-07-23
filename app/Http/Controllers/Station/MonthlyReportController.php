@@ -50,22 +50,30 @@ class MonthlyReportController extends Controller
 
         $station = Auth::user()->station;
 
-        $report = MonthlyReport::firstOrCreate(
-            [
-                'station_id' => $station->id,
-                'year' => $data['year'],
-                'month' => strtoupper($data['month']),
-            ],
-            [
-                'user_id' => Auth::id(),
-                'submission_status' => 'submitted',
-            ]
-        );
+        // Check if report already exists
+        $existingReport = MonthlyReport::where('station_id', $station->id)
+            ->where('year', $data['year'])
+            ->where('month', strtoupper($data['month']))
+            ->first();
 
-        $report->refresh();
+        if ($existingReport) {
+            return redirect()->route('station.reports.show', $existingReport)
+                ->with('status', 'Report already exists for this period. You can add more designations.');
+        }
+
+        // Create new report
+        $report = MonthlyReport::create([
+            'station_id' => $station->id,
+            'user_id' => Auth::id(),
+            'year' => $data['year'],
+            'month' => strtoupper($data['month']),
+            'submission_status' => 'draft', // Changed from 'submitted' to 'draft'
+        ]);
+
+        $report->refresh(); // This will load the report_identifier and month_full from DB trigger
 
         return redirect()->route('station.reports.show', $report)
-            ->with('status', 'You can now add designation records for ' . $report->month_full . ' ' . $report->year . '.');
+            ->with('status', 'Report created for ' . $report->month_full . ' ' . $report->year . '. You can now add designation records.');
     }
 
     public function show(MonthlyReport $monthlyReport): View
@@ -74,12 +82,18 @@ class MonthlyReportController extends Controller
 
         $monthlyReport->load(['reportDetails.designation']);
 
-        $submittedIds = $monthlyReport->reportDetails->pluck('designation_id');
-
-        $remainingDesignations = Designation::active()
-            ->whereNotIn('id', $submittedIds)
+        // Get all active designations
+        $allDesignations = Designation::active()
             ->orderBy('sort_order')
             ->get();
+
+        // Get IDs of already submitted designations for this report
+        $submittedIds = $monthlyReport->reportDetails->pluck('designation_id')->toArray();
+
+        // Get remaining designations (not yet submitted)
+        $remainingDesignations = $allDesignations->filter(function ($designation) use ($submittedIds) {
+            return !in_array($designation->id, $submittedIds);
+        });
 
         return view('station.reports.show', compact('monthlyReport', 'remainingDesignations'));
     }
@@ -87,7 +101,7 @@ class MonthlyReportController extends Controller
     protected function authorizeStationOwnership(MonthlyReport $monthlyReport): void
     {
         if ($monthlyReport->station_id !== Auth::user()->station_id) {
-            abort(403);
+            abort(403, 'You are not authorized to access this report.');
         }
     }
 }
