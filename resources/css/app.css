@@ -1,3 +1,178 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	:root {
+		--brand-gold: #ebae34;
+		--ink: #000000;
+		--paper: #ffffff;
+		--line: #e5e5e5;
+		--muted: #5f5f5f;
+	}
+
+	* {
+		border-color: var(--line);
+	}
+
+	html {
+		background: var(--paper);
+	}
+
+	body {
+		background: var(--paper) !important;
+		color: var(--ink) !important;
+		font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
+		letter-spacing: 0.01em;
+	}
+
+	a {
+		color: var(--ink);
+	}
+
+	button,
+	input,
+	select,
+	textarea {
+		font: inherit;
+	}
+}
+
+@layer components {
+	.site-header {
+		background: var(--paper);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.brand-lockup {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.7rem;
+		color: var(--ink);
+		font-size: 1.1rem;
+		font-weight: 800;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.brand-mark {
+		display: grid;
+		width: 2.1rem;
+		height: 2.1rem;
+		place-items: center;
+		border-radius: 0.45rem;
+		background: var(--brand-gold);
+		color: var(--ink);
+		font-size: 0.8rem;
+		font-weight: 900;
+	}
+
+	.page-shell {
+		width: min(100% - 2rem, 74rem);
+		margin-inline: auto;
+		padding-block: 2rem 3rem;
+	}
+
+	.page-heading {
+		color: var(--ink);
+		font-size: clamp(1.35rem, 2vw, 1.75rem);
+		font-weight: 800;
+		line-height: 1.25;
+	}
+
+	.ui-card {
+		background: var(--paper) !important;
+		border: 1px solid var(--line);
+		border-radius: 0.6rem !important;
+		box-shadow: none !important;
+	}
+
+	.ui-button,
+	button,
+	input[type='submit'],
+	input[type='button'] {
+		background: var(--brand-gold) !important;
+		border: 1px solid var(--brand-gold) !important;
+		border-radius: 0.45rem !important;
+		color: var(--ink) !important;
+		font-weight: 800 !important;
+		box-shadow: none !important;
+		transition: filter 150ms ease, transform 150ms ease;
+	}
+
+	.ui-button:hover,
+	button:hover,
+	input[type='submit']:hover,
+	input[type='button']:hover {
+		filter: brightness(0.94);
+	}
+
+	.ui-button:active,
+	button:active,
+	input[type='submit']:active,
+	input[type='button']:active {
+		transform: translateY(1px);
+	}
+
+	input:not([type='checkbox']):not([type='radio']),
+	select,
+	textarea {
+		background: var(--paper) !important;
+		border: 1px solid #bcbcbc !important;
+		border-radius: 0.45rem !important;
+		color: var(--ink) !important;
+		box-shadow: none !important;
+	}
+
+	input:focus,
+	select:focus,
+	textarea:focus {
+		border-color: var(--brand-gold) !important;
+		box-shadow: 0 0 0 2px rgba(235, 174, 52, 0.28) !important;
+		outline: none !important;
+	}
+
+	table {
+		border-collapse: collapse;
+	}
+
+	th {
+		color: var(--ink) !important;
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	td,
+	th {
+		border-bottom: 1px solid var(--line);
+		padding: 0.85rem 0.6rem;
+		text-align: left;
+	}
+
+	tr:last-child td {
+		border-bottom: 0;
+	}
+}
+
+/* Keep legacy Blade utility classes within the product palette. */
+.bg-gray-100, .bg-gray-50, .bg-gray-900, .bg-white,
+.dark\:bg-gray-800, .dark\:bg-gray-900 { background-color: #fff !important; }
+.text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600,
+.text-gray-500, .text-gray-400, .dark\:text-gray-100, .dark\:text-gray-300,
+.dark\:text-gray-400, .text-indigo-600, .text-indigo-700, .text-green-600,
+.text-yellow-600, .text-yellow-800, .text-red-600 { color: #000 !important; }
+.border-gray-100, .border-gray-200, .border-gray-300, .border-gray-500,
+.border-indigo-400, .border-indigo-500, .border-green-300, .border-yellow-300,
+.border-red-600 { border-color: var(--line) !important; }
+.bg-green-100, .bg-yellow-100, .bg-indigo-50, .bg-red-600 { background-color: #fff !important; }
+.bg-yellow-50, .bg-green-50, .bg-indigo-600, .bg-gray-700,
+a.bg-indigo-600, a.bg-gray-700, a.bg-red-600 {
+	background-color: var(--brand-gold) !important;
+	color: var(--ink) !important;
+}
+.text-white, .dark\:text-white { color: var(--ink) !important; }
+.hover\:underline:hover, a:hover { text-decoration: underline; text-decoration-color: var(--brand-gold); text-underline-offset: 0.2em; }
+.shadow, .shadow-sm, .shadow-md, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+.rounded-full { border-radius: 0.45rem !important; }
